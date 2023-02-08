@@ -24,3 +24,9 @@ export const getMovieCast = async movie_id => {
   console.log(response);
   return response;
 };
+
+export const getSearchMovie = async (page, query) => {
+  const response = await api.get(`/search/movie?query=${query}page=${page}`);
+  console.log(response);
+  return response;
+};
