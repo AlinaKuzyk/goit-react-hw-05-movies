@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Outlet, useParams, useLocation } from 'react-router-dom';
 import { getMovieDetails } from '../../api/api';
 import { Wrapper, TextWrapper, InfoWrapper } from './MovieDetails.styled';
 
@@ -10,19 +10,27 @@ const MovieDetails = () => {
 
   const [movie, setMovie] = useState({});
 
+  const location = useLocation();
+
   useEffect(() => {
     async function movieDetails() {
       const movie = await getMovieDetails(movieId);
       setMovie(movie);
     }
     movieDetails();
+    // eslint-disable-next-line
   }, []);
 
   return (
     <div>
+      <Link to={location.state?.from ?? '/'}>Go back</Link>
       <Wrapper>
         <img
-          src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
+          src={
+            movie.poster_path
+              ? `https://image.tmdb.org/t/p/w500/${movie.poster_path}`
+              : 'https://static.wikia.nocookie.net/otonari-no-tenshi/images/c/c9/No_images_available.jpg/revision/latest/scale-to-width-down/350?cb=20220104141308'
+          }
           alt={movie.title}
           width="200px"
         />
@@ -47,13 +55,14 @@ const MovieDetails = () => {
 
         <ul>
           <li>
-            <Link to={`/movie/${movieId}/cast`}>Cast</Link>
+            <Link to={'cast'}>Cast</Link>
           </li>
           <li>
-            <Link>Reviews</Link>
+            <Link to={'reviews'}>Reviews</Link>
           </li>
         </ul>
       </InfoWrapper>
+      <Outlet />
     </div>
   );
 };

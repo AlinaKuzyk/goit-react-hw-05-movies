@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Nav, NavItem } from './Layout.styled';
 
@@ -9,7 +10,9 @@ const Layout = () => {
 
         <NavItem to="/movies">Movies</NavItem>
       </Nav>
-      <Outlet />
+      <Suspense fallback={<p>Loading...</p>}>
+        <Outlet />
+      </Suspense>
     </>
   );
 };

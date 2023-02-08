@@ -1,51 +1,60 @@
-import { useState, useEffect, useSearchParams } from 'react';
-import { Container } from './Movies.styled';
+import { useState, useEffect } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
+import {
+  Container,
+  FormStyled,
+  InputStyled,
+  ListSearch,
+} from './Movies.styled';
 import { getSearchMovie } from '../../api/api';
+import { Link } from 'react-router-dom';
 
 const Movies = () => {
+  // eslint-disable-next-line
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const queryString = location.search.replace(/\?query=/, '');
 
-  const page = searchParams.get('page') ?? 1;
-  console.log(page);
-  const query = searchParams.get('query') ?? '';
-  console.log(query);
-
-  const [Movie, setMovie] = useState([]);
+  const [searchWord, setSearchWord] = useState('');
+  const [listFilms, setListFilms] = useState([]);
 
   useEffect(() => {
-    async function searchFilm() {
-      const film = await getSearchMovie(page, query);
-      setMovie(film);
+    if (queryString) {
+      getSearchMovie(queryString).then(response => setListFilms(response));
     }
-    searchFilm();
-  }, [page, query]);
-  //   getSearchMovie();
+  }, [queryString]);
 
   const handleInputChange = event => {
-    console.log(event.currentTarget.value);
+    setSearchWord(event.currentTarget.value);
+  };
+
+  const handleFormSubmit = event => {
+    event.preventDefault();
+    if (searchWord.trim() === '') {
+      alert('Please enter what do you want to find.');
+      return;
+    }
+    setSearchParams({ query: searchWord });
   };
 
   return (
     <Container>
-      <form>
-        <input type="text" onChange={handleInputChange} />
-
+      <FormStyled onSubmit={handleFormSubmit}>
+        <InputStyled onChange={handleInputChange} type="text" />
         <button type="submit">Search</button>
-      </form>
+      </FormStyled>
 
-      <ul></ul>
+      <ListSearch>
+        {listFilms.map(film => (
+          <li key={film.id}>
+            <Link state={{ from: location }} to={`/movies/${film.id}`}>
+              {film.original_title}
+            </Link>
+          </li>
+        ))}
+      </ListSearch>
     </Container>
   );
 };
 
 export default Movies;
-
-// const handleFormSubmit = event => {
-//   event.preventDefault();
-
-//   if (searchWord.trim() === '') {
-//     alert('Please, enter what do you want to find.');
-//     return;
-//   }
-//   setSearchParams({ query: searchWord.toLowerCase(), page: 1 });
-// };

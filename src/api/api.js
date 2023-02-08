@@ -21,12 +21,18 @@ export const getMovieDetails = async movie_id => {
 
 export const getMovieCast = async movie_id => {
   const response = await api.get(`/movie/${movie_id}/credits`);
-  console.log(response);
-  return response;
+  //   console.log(response.data.cast);
+  return response.data.cast;
 };
 
-export const getSearchMovie = async (page, query) => {
-  const response = await api.get(`/search/movie?query=${query}page=${page}`);
-  console.log(response);
-  return response;
+export const getMovieReviews = async movie_id => {
+  const response = await api.get(`movie/${movie_id}/reviews?`);
+  //   console.log(response);
+  return response.data.results;
+};
+
+export const getSearchMovie = async query => {
+  const response = await api.get(`/search/movie?query=${query}`);
+  //   console.log(response);
+  return response.data.results;
 };
